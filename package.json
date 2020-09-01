@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/aletriram/import-utility#readme",
   "dependencies": {
+    "@aletriram/utils": "^0.5.0",
     "axios": "^0.20.0",
     "csv-parser": "^2.3.3",
     "json-to-graphql-query": "^2.0.0"
