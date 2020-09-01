@@ -1,0 +1,23 @@
+{
+  "name": "@aletriram/import-utility",
+  "version": "1.0.0",
+  "description": "Herramienta para importar",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://aletriram@github.com/aletriram/import-utility.git"
+  },
+  "author": "Alejandro Trinidad Ramos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aletriram/import-utility/issues"
+  },
+  "homepage": "https://github.com/aletriram/import-utility#readme",
+  "dependencies": {
+    "csv-parser": "^2.3.3",
+    "json-to-graphql-query": "^2.0.0"
+  }
+}
