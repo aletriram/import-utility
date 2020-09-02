@@ -5,7 +5,7 @@ const axios = require('axios');
 const {performance} = require('perf_hooks');
 const utils = require('@aletriram/utils');
 
-const filename = 'test.csv'
+const filename = 'NOTICIAS.csv'
 const APIKEY = 'rOYgx8MZkmqK711ZIEjOSP4Vrz56rKJpCJV7xjdn__lOaKuVuJ4vr9AoUXYQ_F5Z';
 const APIURL = 'https://graphql.apirocket.io/';
 
@@ -23,24 +23,25 @@ fs.createReadStream(`tmp/${filename}`).pipe(csv()).on('data', (row) => {
 			}
 		}
 	}, { pretty: true });
-	console.log(query);
 
 	let start = performance.now();
 	return axios.post(APIURL, { query }, config).then((res) => {
 		let time = performance.now() - start;
 		console.log('##########################' + time);
 		console.log(res.data.errors);
+
+		fs.appendFile(`tmp/${filename}-out.csv`, `${time}\n`, function (err) { if (err) throw err; });
+
 	}).catch(error => {
 		console.log(error.message);
 	});
 }).on('end', () => {
 	console.log('CSV file successfully processed');
-	wirteLog(filename, times);
+	// wirteLog(filename, times);
 });
 
 
 function wirteLog(filename, times) {
-	console.log(times);
 	fs.writeFile(`tmp/${filename}-out.csv`, times.join('\n'), function (err) {
 		if (err) throw err;
 		console.log('Saved time log!');
@@ -50,7 +51,7 @@ function wirteLog(filename, times) {
 
 
 function getInput(row) {
-console.log(row.destacar);
+
 	let dato = {
 		titulo: row.titulo ? row.titulo : row.descripcion,
 		entradilla: row.entradilla,
@@ -69,7 +70,7 @@ console.log(row.destacar);
 	}
 
 	if (row.foto != '') {
-		dato.foto = `https://www.alcaladeguadaira.es/photo/noticias/${row.id}/${row.fotoV}/${utils.Strings.toUrl(row.row.titulo)}.jpg`;
+		dato.foto = `https://www.alcaladeguadaira.es/photo/noticias/${row.id}/${row.fotoV}/${utils.Strings.toUrl(row.titulo)}.jpg`;
 	}
 
 	return dato;
