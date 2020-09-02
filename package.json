@@ -20,6 +20,7 @@
     "@aletriram/utils": "^0.5.0",
     "axios": "^0.20.0",
     "csv-parser": "^2.3.3",
-    "json-to-graphql-query": "^2.0.0"
+    "json-to-graphql-query": "^2.0.0",
+    "p-queue": "^6.6.1"
   }
 }

@@ -4,6 +4,7 @@ const { jsonToGraphQLQuery, EnumType } = require('json-to-graphql-query');
 const axios = require('axios');
 const {performance} = require('perf_hooks');
 const utils = require('@aletriram/utils');
+const {default: PQueue} = require('p-queue');
 
 const filename = 'NOTICIAS.csv'
 const APIKEY = 'rOYgx8MZkmqK711ZIEjOSP4Vrz56rKJpCJV7xjdn__lOaKuVuJ4vr9AoUXYQ_F5Z';
@@ -12,6 +13,7 @@ const APIURL = 'https://graphql.apirocket.io/';
 let times = [];
 let config = { headers: { Authorization: 'Bearer ' + APIKEY } };
 
+const queue = new PQueue({concurrency: 10});
 
 fs.createReadStream(`tmp/${filename}`).pipe(csv()).on('data', (row) => {
 
@@ -25,15 +27,21 @@ fs.createReadStream(`tmp/${filename}`).pipe(csv()).on('data', (row) => {
 	}, { pretty: true });
 
 	let start = performance.now();
-	return axios.post(APIURL, { query }, config).then((res) => {
-		let time = performance.now() - start;
-		console.log('##########################' + time);
-		console.log(res.data.errors);
+	queue.add(() => {
+		return axios.post(APIURL, { query }, config).then((res) => {
+			let time = performance.now() - start;
+			console.log('##########################' + time);
+			console.log(res.data.errors);
 
-		fs.appendFile(`tmp/${filename}-out.csv`, `${time}\n`, function (err) { if (err) throw err; });
+			let errors = '';
+			if (res.data.errors && res.data.errors.length) res.data.errors.map((error) => error.message).join(',');
 
-	}).catch(error => {
-		console.log(error.message);
+			fs.appendFile(`tmp/${filename}-out.csv`,`${time},${res.status},${errors}\n`, function (err) { if (err) throw err; });
+
+		}).catch(error => {
+			console.log(error.message);
+			fs.appendFile(`tmp/${filename}-out.csv`, `${time},${error.status},${error.message}\n`, function (err) { if (err) throw err; });
+		});
 	});
 }).on('end', () => {
 	console.log('CSV file successfully processed');
