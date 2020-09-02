@@ -13,7 +13,7 @@ const APIURL = 'https://graphql.apirocket.io/';
 let times = [];
 let config = { headers: { Authorization: 'Bearer ' + APIKEY } };
 
-const queue = new PQueue({concurrency: 10});
+const queue = new PQueue({concurrency: 20});
 
 fs.createReadStream(`tmp/${filename}`).pipe(csv()).on('data', (row) => {
 
@@ -26,8 +26,8 @@ fs.createReadStream(`tmp/${filename}`).pipe(csv()).on('data', (row) => {
 		}
 	}, { pretty: true });
 
-	let start = performance.now();
 	queue.add(() => {
+		let start = performance.now();
 		return axios.post(APIURL, { query }, config).then((res) => {
 			let time = performance.now() - start;
 			console.log('##########################' + time);
@@ -78,7 +78,10 @@ function getInput(row) {
 	}
 
 	if (row.foto != '') {
-		dato.foto = `https://www.alcaladeguadaira.es/photo/noticias/${row.id}/${row.fotoV}/${utils.Strings.toUrl(row.titulo)}.jpg`;
+		dato.foto = {
+			url: `https://www.alcaladeguadaira.es/photo/noticias/${row.id}/${row.fotoV}/${utils.Strings.toUrl(row.titulo)}.jpg`
+		}
+		console.log(dato.foto.url);
 	}
 
 	return dato;
