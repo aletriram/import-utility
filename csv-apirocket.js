@@ -70,7 +70,10 @@ function getInput(row) {
 	}
 
 	if (row.foto != '') {
-		dato.foto = `https://www.alcaladeguadaira.es/photo/noticias/${row.id}/${row.fotoV}/${utils.Strings.toUrl(row.titulo)}.jpg`;
+		dato.foto = {
+			url: `https://www.alcaladeguadaira.es/photo/noticias/${row.id}/${row.fotoV}/${utils.Strings.toUrl(row.titulo)}.jpg`;
+		}
+
 	}
 
 	return dato;
